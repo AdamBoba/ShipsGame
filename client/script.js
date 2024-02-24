@@ -15,12 +15,15 @@ document.addEventListener('DOMContentLoaded', function () {
   drawBoard(myBoardElement, myBoard);
   drawBoard(enemyBoardElement, enemyBoard);
 
+  // Informacja o dostępnych statkach do ustawienia
+  const shipsInfoElement = document.getElementById('shipsInfo');
+
   // Kliknięcie na planszę gracza - rozmieszczenie statków
   myBoardElement.addEventListener('click', (event) => {
     if (!ready) {
       const cell = event.target;
-      const rowIndex = cell.dataset.row;
-      const colIndex = cell.dataset.col;
+      const rowIndex = parseInt(cell.dataset.row);
+      const colIndex = parseInt(cell.dataset.col);
 
       // Sprawdź, czy statek może być rozmieszczony
       if (canPlaceShip(rowIndex, colIndex, shipsPlaced, myBoard)) {
@@ -28,9 +31,12 @@ document.addEventListener('DOMContentLoaded', function () {
         shipsPlaced++;
 
         // Jeśli wszystkie statki ustawione, pokaż przycisk gotowości
-        if (shipsPlaced === 10) {
+        if (shipsPlaced === 6) {
           showReadyButton();
         }
+
+        // Aktualizuj informacje o dostępnych statkach
+        updateShipsInfo();
       }
     }
   });
@@ -39,8 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
   enemyBoardElement.addEventListener('click', (event) => {
     if (ready) {
       const cell = event.target;
-      const rowIndex = cell.dataset.row;
-      const colIndex = cell.dataset.col;
+      const rowIndex = parseInt(cell.dataset.row);
+      const colIndex = parseInt(cell.dataset.col);
 
       // Wyslij informacje do serwera o strzale na plansze przeciwnika
       socket.emit('shoot', { row: rowIndex, col: colIndex });
@@ -49,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Obsługa gotowości gracza
   function toggleReady() {
-    if (shipsPlaced === 10 && !ready) {
+    if (shipsPlaced === 6 && !ready) {
       ready = true;
       hideReadyButton();
       socket.emit('playerReady', myBoard);
@@ -97,13 +103,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function canPlaceShip(rowIndex, colIndex, size, board) {
     // Dodaj logikę, która sprawdza, czy można umieścić statek w danym miejscu
-    return !board[rowIndex][colIndex];
+    if (colIndex + size <= 10) {
+      // Sprawdź ustawianie poziomo
+      for (let i = 0; i < size; i++) {
+        if (board[rowIndex][colIndex + i]) {
+          return false;
+        }
+      }
+      return true;
+    } else if (rowIndex + size <= 10) {
+      // Sprawdź ustawianie pionowo
+      for (let i = 0; i < size; i++) {
+        if (board[rowIndex + i][colIndex]) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   function placeShip(rowIndex, colIndex, size, board) {
     // Umieść statek w danym miejscu na planszy
     for (let i = 0; i < size; i++) {
-      if (board[rowIndex][colIndex + i] !== undefined) {
+      if (colIndex + i < 10) {
         board[rowIndex][colIndex + i] = true;
       } else {
         board[rowIndex + i][colIndex] = true;
@@ -112,6 +135,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Zaktualizuj widok planszy
     drawBoard(myBoardElement, myBoard);
+  }
+
+  // Aktualizuj informacje o dostępnych statkach
+  function updateShipsInfo() {
+    const remainingShips = {
+      '1': 1, // Jednomasztowiec
+      '2': 2, // Dwumasztowiec
+      '3': 3, // Trójmasztowiec
+      '4': 1, // Czteromasztowiec
+    };
+
+    for (let row = 0; row < myBoard.length; row++) {
+      for (let col = 0; col < myBoard[row].length; col++) {
+        if (myBoard[row][col]) {
+          const shipSize = calculateShipSize(row, col, myBoard);
+          if (remainingShips[shipSize] !== undefined) {
+            remainingShips[shipSize]--;
+          }
+        }
+      }
+    }
+
+    // Aktualizuj element HTML z informacją o dostępnych statkach
+    let infoText = 'Dostępne statki: ';
+    for (const size in remainingShips) {
+      if (remainingShips[size] > 0) {
+        infoText += `${remainingShips[size]} x ${size}-maszt. `;
+      }
+    }
+
+    shipsInfoElement.textContent = infoText;
+  }
+
+  // Funkcje pomocnicze
+  function calculateShipSize(rowIndex, colIndex, board) {
+    let size = 1;
+    // Sprawdź wielkość statku w pionie
+    while (rowIndex + size < board.length && board[rowIndex + size][colIndex]) {
+      size++;
+    }
+    // Sprawdź wielkość statku w poziomie
+    size = 1;
+    while (colIndex + size < board[rowIndex].length && board[rowIndex][colIndex + size]) {
+      size++;
+    }
+    return size.toString();
   }
 
   // Pozostała część kodu dla obsługi zdarzeń od serwera, np. playerJoined, playerLeft, updateOpponentBoard, itp.
@@ -151,6 +220,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateMyBoard(board) {
     // Zaktualizuj planszę gracza na stronie
     drawBoard(myBoardElement, board);
+    // Aktualizuj informacje o dostępnych statkach
+    updateShipsInfo();
   }
 
   function updateEnemyBoard(board) {

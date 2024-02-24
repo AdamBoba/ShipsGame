@@ -1,39 +1,37 @@
-/* client/style.css */
-
+/* style.css */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
-  }
-  
-  h1 {
-    text-align: center;
-    color: #333;
+    background-color: #f5f5f5;
   }
   
   #gameContainer {
     display: flex;
-    justify-content: space-around;
-    margin: 20px auto;
-    max-width: 800px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  #boardsContainer {
+    display: flex;
+    gap: 20px;
   }
   
   .board {
     display: grid;
-    grid-template-columns: repeat(10, 40px);
-    grid-template-rows: repeat(10, 40px);
-    gap: 5px;
-    border: 2px solid #333;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 2px;
     background-color: #fff;
+    border: 1px solid #ddd;
   }
   
   .cell {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ccc;
-    text-align: center;
-    line-height: 40px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
     cursor: pointer;
   }
   
@@ -41,24 +39,26 @@ body {
     background-color: #3498db;
   }
   
-  .hit {
-    background-color: #e74c3c;
+  #infoContainer {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
-  .miss {
-    background-color: #2ecc71;
+  #shipsInfo {
+    margin-bottom: 10px;
+    font-size: 18px;
   }
   
   #readyButton {
-    width: 80px;
-    height: 40px;
+    padding: 10px 20px;
+    font-size: 16px;
     background-color: #2ecc71;
     color: #fff;
-    font-size: 14px;
     border: none;
     cursor: pointer;
-    display: block;
-    margin: 10px auto;
+    transition: background-color 0.3s ease;
   }
   
   #readyButton:hover {
