@@ -1,0 +1,67 @@
+/* client/style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  #gameContainer {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px auto;
+    max-width: 800px;
+  }
+  
+  .board {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 5px;
+    border: 2px solid #333;
+    background-color: #fff;
+  }
+  
+  .cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+  }
+  
+  .ship {
+    background-color: #3498db;
+  }
+  
+  .hit {
+    background-color: #e74c3c;
+  }
+  
+  .miss {
+    background-color: #2ecc71;
+  }
+  
+  #readyButton {
+    width: 80px;
+    height: 40px;
+    background-color: #2ecc71;
+    color: #fff;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto;
+  }
+  
+  #readyButton:hover {
+    background-color: #27ae60;
+  }
+  

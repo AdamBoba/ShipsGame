@@ -1,0 +1,21 @@
+<!-- client/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gra w Statki Multiplayer</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Gra w Statki Multiplayer</h1>
+  <div id="gameContainer">
+    <div class="board" id="myBoard"></div>
+    <div class="board" id="enemyBoard"></div>
+    <button id="readyButton" onclick="toggleReady()">Gotowy</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
